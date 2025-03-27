@@ -1,13 +1,30 @@
-stages:
-  - security
-  - test
-  - deploy
+name: Security Scan
 
-security_scan:
-  stage: security
-  image: node:18
-  before_script:
-    - npm install -g snyk
-    - snyk auth $SNYK_TOKEN
-  script:
-    - snyk test
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  snyk-security:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Snyk
+      run: npm install -g snyk
+
+    - name: Run Snyk Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk test
+
