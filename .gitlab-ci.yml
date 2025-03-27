@@ -1,0 +1,13 @@
+stages:
+  - security
+  - test
+  - deploy
+
+security_scan:
+  stage: security
+  image: node:18
+  before_script:
+    - npm install -g snyk
+    - snyk auth $SNYK_TOKEN
+  script:
+    - snyk test
